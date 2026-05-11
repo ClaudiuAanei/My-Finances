@@ -1,0 +1,13 @@
+# Migrations
+migrations/
+__pycache__/
+*.pyc
+
+# Sensitive data
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+config/secrets.json
