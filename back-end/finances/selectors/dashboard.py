@@ -82,13 +82,32 @@ class MonthlyBudgetSelector:
         return latest_limits
     
     def _get_categories_info(self, transaction_type="actual"):
-        categories = Category.objects.filter(users=self.user).exclude(type="income").distinct()
+        categories = list(Category.objects.filter(users=self.user).exclude(type="income").distinct())
+        category_ids = [category.id for category in categories]
+
+        totals_by_category = {}
+        if category_ids:
+            totals_queryset = (
+                Transaction.objects.filter(
+                    user=self.user,
+                    date__month=self.date.month,
+                    date__year=self.date.year,
+                    type=transaction_type,
+                    category_id__in=category_ids,
+                )
+                .values("category_id")
+                .annotate(total=Sum("amount"))
+            )
+            totals_by_category = {
+                item["category_id"]: item["total"] or 0
+                for item in totals_queryset
+            }
         
         latest_limits = self._get_latest_limits()
         categories_info = []
 
         for category in categories:
-            total = self._get_total(self.date, transaction_type=transaction_type, category_id=category.id, category_type=category.type)
+            total = totals_by_category.get(category.id, 0)
             limit = latest_limits.get(category.id)
             limit_amount = limit.limit_amount if limit else None
             categories_info.append({

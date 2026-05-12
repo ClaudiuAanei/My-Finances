@@ -19,7 +19,7 @@ class TransactionsSelector:
         return total
 
     def get_transactions(self, date, category: list | None = None, name=None):
-        transactions = Transaction.objects.filter(user=self.user)
+        transactions = Transaction.objects.filter(user=self.user).select_related("category")
 
         if date:
             transactions = transactions.filter(date__year=date.year, date__month=date.month)
