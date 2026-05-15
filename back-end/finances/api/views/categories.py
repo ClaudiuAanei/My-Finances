@@ -21,7 +21,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         except (TypeError, ValueError):
             selected_date = datetime.now().replace(day=1)
 
-        return selector.get_categories(selected_date)
+        return selector.get_categories_info(selected_date)
     
 
 class CategoryLimitViewSet(viewsets.ModelViewSet):

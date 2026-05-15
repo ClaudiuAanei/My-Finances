@@ -26,12 +26,14 @@ class Transaction(models.Model):
         unique_together = ("user", "date", "name", "amount", "category", "monthly_budget")
         indexes = [
             models.Index(fields=["user", "date", "name", "amount", "category", "monthly_budget"]),
+            models.Index(fields=["user", "monthly_budget", "type", "category"]),
+            models.Index(fields=["user", "type", "date"]),
         ]
         verbose_name_plural = "Transactions"
         verbose_name = "Transaction"
 
     def __str__(self):
-        return f"{self.name}: {self.amount} on {self.date}"
+        return f"{self.name}: {self.amount}{self.currency} on {self.date}"
     
     
     

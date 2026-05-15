@@ -2,7 +2,7 @@ from datetime import datetime
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.response import Response
 from finances.models.budget import MonthlyBudget
-from finances.selectors.dashboard import MonthlyBudgetSelector
+from finances.selectors.dashboard import DashboardSelector
 from finances.api.serializers.dashboard import DashboardResponseSerializer, MonthlyBudgetTargetSerializer
 
 
@@ -27,8 +27,11 @@ class DashboardView(viewsets.ViewSet):
         else:
             date = datetime.now().replace(day=1)
 
+        # Persist selected dashboard month in session for transactions scoping.
+        request.session["selected_dashboard_date"] = date.date().isoformat()
+
         # Get dashboard data using the selector
-        dashboard_selector = MonthlyBudgetSelector(user, date)
+        dashboard_selector = DashboardSelector(user, date)
         dashboard_data = dashboard_selector.get_dashboard_data(transaction_type=transaction_type)
 
         # Serialize and return the response
