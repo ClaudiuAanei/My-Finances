@@ -41,7 +41,6 @@ class DashboardView(viewsets.ViewSet):
     
 
 class MonthlyBudgetSetTargetView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = MonthlyBudget.objects.all()
     serializer_class = MonthlyBudgetTargetSerializer
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ["get", "put", "patch", "delete", "head", "options"]

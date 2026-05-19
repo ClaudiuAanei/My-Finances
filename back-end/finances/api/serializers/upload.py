@@ -11,6 +11,14 @@ class FileUploadSerializer(serializers.Serializer):
     year = serializers.IntegerField(required=False)
     
     def validate_file(self, value):
+        """
+        Validates that the uploaded file is a CSV and contains the required columns.
+         - name: The name of the transaction.
+         - description: A description of the transaction.
+         - date: The date of the transaction (in a recognizable format).
+         - amount: The amount of the transaction.
+         - currency: The currency of the transaction.
+         """
         if not value.name.endswith('.csv'):
             raise serializers.ValidationError({"error": "Only CSV files are allowed."})
         

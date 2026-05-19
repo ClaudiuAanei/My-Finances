@@ -17,8 +17,8 @@ class DashboardCollection:
     def get_available_years(self):
         return [value.year for value in self.queryset.dates("date", "year")]
     
-    def get_available_months(self):
-        return [value.month for value in self.queryset.dates("date", "month")]
+    def get_available_months(self, year: int):
+        return [value.month for value in self.queryset.filter(date__year=year).dates("date", "month")]
 
     
 class DashboardSelector(TransactionsSelector):
@@ -70,7 +70,7 @@ class DashboardSelector(TransactionsSelector):
     def get_monthly_status(self, summary: dict, monthly_budget=None):
         monthly_budget = monthly_budget or self.get_monthly_budget(self.selected_date)
         if not monthly_budget:
-            return None
+            return {}
 
         saving_target = monthly_budget.saving_goal or 0
         remaining_to_target = saving_target - summary["balance"]
@@ -99,9 +99,10 @@ class DashboardSelector(TransactionsSelector):
         
         return {
             "type": transaction_type,
+            "budget_id": monthly_budget.id if monthly_budget else None,
             "info": f"Budget : {str(monthly_budget)}" if monthly_budget else "No budget set",
             "available_years": collection.get_available_years(),
-            "available_months": collection.get_available_months(),
+            "available_months": collection.get_available_months(self.selected_date.year),
             "summary": summary,
             "monthly_status": self.get_monthly_status(summary, monthly_budget=monthly_budget),
             "categories": self.get_categories_info()

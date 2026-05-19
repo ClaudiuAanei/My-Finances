@@ -28,6 +28,7 @@ class DashboardCategorySerializer(serializers.Serializer):
 
 
 class DashboardResponseSerializer(serializers.Serializer):
+    budget_id = serializers.IntegerField(allow_null=True)
     type = serializers.ChoiceField(choices=[choice[0] for choice in Transaction.TYPE_CHOICES])
     info = serializers.CharField()
     available_years = serializers.ListField(child=serializers.IntegerField())
